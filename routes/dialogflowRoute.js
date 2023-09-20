@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const { getInvoiceDetails } = require('../utils/helperFunctions');
+
 // Handle handleInvoiceNumber
 const handleInvoiceNumber = async (req) => {
 
@@ -8,7 +10,25 @@ const handleInvoiceNumber = async (req) => {
 
     let session = req.body.session;
 
-    let response = await getInvoiceDetails(invoiceNumber);
+    let outputContexts = req.body.queryResult.outputContexts;
+
+    let base_url, username, password, bearer
+
+    outputContexts.forEach(outputContext => {
+        let session = outputContext.name;
+        if (session.includes('/contexts/session')) {
+            if (outputContext.hasOwnProperty('parameters')) {
+                base_url =  outputContext.parameters.base_url;
+                username =  outputContext.parameters.username;
+                password =  outputContext.parameters.password;
+                bearer = outputContext.parameters.bearer;
+            }
+        }
+    });
+
+    console.log(invoiceNumber, base_url, username, password)
+
+    let response = await getInvoiceDetails(base_url, username, password, bearer, invoiceNumber);
 
     if (response.status == 5) {
         return {

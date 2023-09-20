@@ -1,23 +1,20 @@
 const axios = require('axios');
 require('dotenv').config();
 
-const BASE_URL = process.env.BASE_URL;
-const USERNAME = process.env.USERNAME;
-const PASSWORD = process.env.PASSWORD;
-
-const getInvoiceDetails = async (invoiceNumber) => {
+const getInvoiceDetails = async (base_url, username, password, bearer, invoiceNumber) => {
 
     let config = {
         method: 'get',
-        url: `${BASE_URL}/invoices?q=InvoiceNumber=${invoiceNumber}`,
+        url: `${base_url}/invoices?q=InvoiceNumber=${invoiceNumber}`,
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${bearer}`
         },
         auth: {
-            username: USERNAME,
-            password: PASSWORD
+            username: username,
+            password: password
         }
-    };
+    };  
 
     try {
         let response = await axios(config);
